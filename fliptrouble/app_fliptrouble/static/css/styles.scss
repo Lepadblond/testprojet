@@ -1,0 +1,288 @@
+/* Variables SCSS */
+$primary-color: #63514c;
+$secondary-color: #f5f7fa;
+$background-color: #715B5A;
+$color-test:#637575;
+$text-color: #7c9682;
+$border-radius: 8px;
+$transition-duration: 0.3s;
+
+/* Post Body Styles */
+.post-body {
+  display: none;
+  max-height: 100px;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+  margin-left: 45px;
+  color: antiquewhite;
+
+  &.active {
+    display: block;
+    max-height: 500px;
+    transition: max-height 0.5s ease-in;
+
+  }
+}
+
+.couleurForum{
+  background-color: $background-color;
+}
+.cancelbutton{
+  background-color: rgba(234, 0, 0, 0.62);
+}
+/* Forum Row */
+
+
+  .row-forum-content {
+    div {
+      i {
+        margin-right: 23px;
+      }
+      .autheurDate {
+        font-size: 0.9rem;
+        color: $secondary-color;
+        margin-right: 50px;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+    }
+
+    h4 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-left: 25px;
+    }
+  }
+
+
+/* Form Styles */
+.form-container {
+  .card {
+    background-color: $background-color;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: $border-radius;
+    overflow: hidden;
+
+    .card-body {
+      padding: 2rem;
+
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: $secondary-color;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+
+          label {
+            font-weight: 600;
+            color: $text-color;
+            margin-bottom: 0.5rem;
+          }
+
+          input[type="text"],
+          select,
+          textarea {
+            padding: 0.8rem;
+            font-size: 1rem;
+            color: $text-color;
+            background-color: $secondary-color;
+            border: 1px solid lighten($primary-color, 30%);
+            border-radius: $border-radius;
+            transition: border-color $transition-duration ease-in-out,
+              box-shadow $transition-duration ease-in-out;
+
+            &:focus {
+              outline: none;
+              border-color: $primary-color;
+              box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+            }
+          }
+
+          textarea {
+            min-height: 150px;
+            resize: vertical;
+          }
+        }
+
+        #summitbtn {
+          padding: 0.8rem 1.5rem;
+          font-size: 1rem;
+          font-weight: bold;
+          color: #fff;
+          background-color: $primary-color;
+          border: none;
+          border-radius: $border-radius;
+          cursor: pointer;
+          transition: background-color $transition-duration ease-in-out,
+            box-shadow $transition-duration ease-in-out;
+
+          &:hover {
+            background-color: darken($primary-color, 10%);
+            box-shadow: 0 4px 8px rgba($primary-color, 0.2);
+          }
+
+          &:focus {
+            outline: none;
+          }
+        }
+
+        p {
+          text-align: center;
+          color: $primary-color;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+/* Comment Section */
+
+
+.postTitre{
+  margin-left: 50px;
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+
+
+
+}
+
+#commentaire{
+  margin-top: 50px;
+  h2{
+    margin-bottom: 15px;
+  }
+}
+.commentaireContainer {
+  border-radius: $border-radius;
+  padding: 1rem;
+
+  .profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .strongUsernname {
+    font-weight: bold;
+    color: #2e323a;
+    font-size: 1.2rem;
+    margin-left: 6px;
+  }
+
+  .smallDate {
+    font-size: 0.8rem;
+    color: #2e323a;
+  }
+
+  p {
+    font-size: 1rem;
+    color: antiquewhite;
+
+    margin-left: 50px;
+  }
+
+.postContenu{
+  margin-left: 70px;
+  margin-top: 25px;
+  color: antiquewhite;
+}
+
+  .btnRepondre {
+    margin-left: 50px;
+
+    a {
+      color: #587ee1;
+      text-decoration: none;
+
+      &:hover {
+        color: #2e323a;
+      }
+    }
+  }
+
+  .reponseContainer {
+    margin-left: 50px;
+
+    p {
+      color: antiquewhite
+    }
+  }
+
+  .FormCommentaire {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: $border-radius;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: 50px;
+
+    textarea {
+      flex: 1;
+      border-radius: 25px;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      font-size: 1rem;
+      font-family: Arial, sans-serif;
+      resize: none;
+      margin-right: 10px;
+    }
+
+    button {
+      height: 100%;
+      border-radius: 25px;
+      padding: 0 20px;
+      font-size: 1rem;
+      font-family: Arial, sans-serif;
+    }
+  }
+}
+
+/* General Styles */
+.toggle-post-body {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(180deg);
+  }
+}
+
+.bg-blanc {
+  background-color: #f8f7f7;
+  color: #2e323a;
+}
+
+.bg-bleu {
+  background-color: #587ee1;
+}
+
+.bg-brun {
+  background-color: #c75445;
+  color: #ffffff;
+}
+
+.bg-brunpale {
+  background-color: #b27556;
+  color: #ffffff;
+}
+
+.bg-noir {
+  background-color: #2e323a;
+  color: #ffffff;
+}

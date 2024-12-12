@@ -1,0 +1,238 @@
+/* Variables SCSS */
+/* Post Body Styles */
+.post-body {
+  display: none;
+  max-height: 100px;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+  margin-left: 45px;
+  color: antiquewhite;
+}
+.post-body.active {
+  display: block;
+  max-height: 500px;
+  transition: max-height 0.5s ease-in;
+}
+
+.couleurForum {
+  background-color: #715B5A;
+}
+
+.cancelbutton {
+  background-color: rgba(234, 0, 0, 0.62);
+}
+
+/* Forum Row */
+.row-forum-content div i {
+  margin-right: 23px;
+}
+.row-forum-content div .autheurDate {
+  font-size: 0.9rem;
+  color: #f5f7fa;
+  margin-right: 50px;
+}
+.row-forum-content div p {
+  font-size: 0.9rem;
+}
+.row-forum-content h4 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-left: 25px;
+}
+
+/* Form Styles */
+.form-container .card {
+  background-color: #715B5A;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.form-container .card .card-body {
+  padding: 2rem;
+}
+.form-container .card .card-body .card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f5f7fa;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.form-container .card .card-body form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.form-container .card .card-body form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+.form-container .card .card-body form .form-group label {
+  font-weight: 600;
+  color: #7c9682;
+  margin-bottom: 0.5rem;
+}
+.form-container .card .card-body form .form-group input[type=text],
+.form-container .card .card-body form .form-group select,
+.form-container .card .card-body form .form-group textarea {
+  padding: 0.8rem;
+  font-size: 1rem;
+  color: #7c9682;
+  background-color: #f5f7fa;
+  border: 1px solid #b09d98;
+  border-radius: 8px;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.form-container .card .card-body form .form-group input[type=text]:focus,
+.form-container .card .card-body form .form-group select:focus,
+.form-container .card .card-body form .form-group textarea:focus {
+  outline: none;
+  border-color: #63514c;
+  box-shadow: 0 0 0 4px rgba(99, 81, 76, 0.1);
+}
+.form-container .card .card-body form .form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+.form-container .card .card-body form #summitbtn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #63514c;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.form-container .card .card-body form #summitbtn:hover {
+  background-color: #463936;
+  box-shadow: 0 4px 8px rgba(99, 81, 76, 0.2);
+}
+.form-container .card .card-body form #summitbtn:focus {
+  outline: none;
+}
+.form-container .card .card-body form p {
+  text-align: center;
+  color: #63514c;
+  font-weight: bold;
+}
+
+/* Comment Section */
+.postTitre {
+  margin-left: 50px;
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+}
+
+#commentaire {
+  margin-top: 50px;
+}
+#commentaire h2 {
+  margin-bottom: 15px;
+}
+
+.commentaireContainer {
+  border-radius: 8px;
+  padding: 1rem;
+}
+.commentaireContainer .profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.commentaireContainer .strongUsernname {
+  font-weight: bold;
+  color: #2e323a;
+  font-size: 1.2rem;
+  margin-left: 6px;
+}
+.commentaireContainer .smallDate {
+  font-size: 0.8rem;
+  color: #2e323a;
+}
+.commentaireContainer p {
+  font-size: 1rem;
+  color: antiquewhite;
+  margin-left: 50px;
+}
+.commentaireContainer .postContenu {
+  margin-left: 70px;
+  margin-top: 25px;
+  color: antiquewhite;
+}
+.commentaireContainer .btnRepondre {
+  margin-left: 50px;
+}
+.commentaireContainer .btnRepondre a {
+  color: #587ee1;
+  text-decoration: none;
+}
+.commentaireContainer .btnRepondre a:hover {
+  color: #2e323a;
+}
+.commentaireContainer .reponseContainer {
+  margin-left: 50px;
+}
+.commentaireContainer .reponseContainer p {
+  color: antiquewhite;
+}
+.commentaireContainer .FormCommentaire {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: 50px;
+}
+.commentaireContainer .FormCommentaire textarea {
+  flex: 1;
+  border-radius: 25px;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  resize: none;
+  margin-right: 10px;
+}
+.commentaireContainer .FormCommentaire button {
+  height: 100%;
+  border-radius: 25px;
+  padding: 0 20px;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+/* General Styles */
+.toggle-post-body {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.toggle-post-body:hover {
+  transform: rotate(180deg);
+}
+
+.bg-blanc {
+  background-color: #f8f7f7;
+  color: #2e323a;
+}
+
+.bg-bleu {
+  background-color: #587ee1;
+}
+
+.bg-brun {
+  background-color: #c75445;
+  color: #ffffff;
+}
+
+.bg-brunpale {
+  background-color: #b27556;
+  color: #ffffff;
+}
+
+.bg-noir {
+  background-color: #2e323a;
+  color: #ffffff;
+}/*# sourceMappingURL=styles.css.map */

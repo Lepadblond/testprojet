@@ -1,0 +1,156 @@
+{% extends 'base.html' %} {% load static %} {% block title %} {{ post.titre }} |
+FlipTrouble {% endblock %} {% block content %}
+<div class="container">
+
+  
+  <div class="row mt-3">
+    <div class="col-md-6 d-flex  mb-4">
+      <a href="/app_fliptrouble/forum" class="btn btn-primary d-flex align-items-center">
+        <i class="fas fa-arrow-left me-2"></i>
+        Retour vers le forum
+      </a>
+    </div>
+  </div>
+
+  <div class="row justify-content-center couleurForum">
+      <div
+        class="h-100 hover-shadow commentaireContainer"
+        style="width: 100%"
+      >
+        <div class="   mb-4">
+          <div class="comment-meta">
+            <img
+            src="https://robohash.org/{{ post.id_utilisateur }}"
+              alt="Profile Image"
+              class="profile-image"
+            />
+     
+
+            <strong class="strongUsernname"
+              >{{ post.id_utilisateur.username }}</strong
+            >
+            <small class="smallDate"
+              >{{ post.cree_a|date:"d M Y H:i" }}</small
+            >
+          </div>
+          <h2 class="card-title postTitre">{{ post.titre }}</h2>
+          <p class="postContenu">{{ post.contenu }}</p>
+        </div>
+      </div>
+
+  </div>
+  <div class="text-center mt-4">
+    <!-- Bouton pour afficher le formulaire -->
+    <button
+      id="afficher-formulaire"
+      class="btn btn-primary"
+      style="width: 200px;"
+      onclick="afficherFormCommentaire()"
+    >
+      Ajouter un commentaire
+    </button>
+  </div>
+  
+  <!-- Formulaire d'ajout de commentaire -->
+  <div id="ajout-commentaire" class="mt-3" style="display: none;">
+ 
+    <form method="post" class="d-flex align-items-center FormCommentaire">
+      {% csrf_token %}
+      <textarea
+        id="id_contenu"
+        name="contenu"
+        class="form-control commentaire-textarea me-3"
+        rows="1"
+        placeholder="Écrivez votre commentaire..."
+        style="flex: 1;"
+        required
+      ></textarea>
+      <button type="submit" class="btn btn-primary">Soumettre</button>
+      <button
+        type="reset"
+      class="btn cancelbutton "
+      >Annuler</button>
+    </form>
+  </div>
+  
+  
+
+  <section id="commentaire">
+    <h2>Commentaires des autres membres</h2>
+    <div class="row">
+      {% for commentaire in commentaires %}
+      <div class="col-md-12">
+        <div class="card shadow-sm  mb-4 commentaireContainer couleurForum">
+          <div class="comment-meta">
+            <img
+              src="https://robohash.org/{{ commentaire.id_utilisateur }}"
+              alt="Profile Image"
+              class="profile-image"
+            />
+
+            <strong class="strongUsernname"
+              >{{ commentaire.id_utilisateur.username }}</strong
+            >
+            <small class="smallDate"
+              >{{ commentaire.cree_a|date:"d M Y H:i" }}</small
+            >
+          </div>
+
+          <p>{{ commentaire.contenu }}</p>
+
+          <div id="ajouterCommentaireEnfant" class="mt-4" style="display: none">
+            <form method="post" class="FormCommentaire">
+                {% csrf_token %}
+                <textarea
+                    id="id_contenu"
+                    name="contenu"
+                    class="form-control commentaire-textarea"
+                    rows="1"
+                    placeholder="Écrivez votre commentaire..."
+                    required
+                ></textarea>
+                <!-- Champ caché pour l'identifiant du parent -->
+                <input type="hidden" name="parent_id" value="{{ commentaire.id }}">
+                <button type="submit" class="btn btn-primary">Soumettre</button>
+            </form>
+        </div>
+        <div id="btnRepondre" class='btnRepondre'>
+          <a class="btn btn-link text-decoration-none btn-repondre" data-id="{{ commentaire.id }}">
+            Répondre
+          </a>
+          <a 
+            href="#" 
+            class="btn btn-link text-decoration-none btn-masquer-reponses" 
+            data-id="{{ commentaire.id }}" 
+            onclick="return false;">
+            Masquer les réponses
+          </a>
+        </div>
+        
+        <div id="reponses-{{ commentaire.id }}" class="reponseContainer ml-4">
+          {% for reponse in commentaire.reponses.all %}
+          <div class="reponse">
+            <div class="comment-meta">
+              <img
+              src="https://robohash.org/{{ reponse.id_utilisateur }}"
+              alt="Profile Image"
+              class="profile-image"
+            />
+
+              <strong class="strongUsernname">{{ reponse.id_utilisateur.username }}</strong>
+              <small class="smallDate">{{ reponse.cree_a|date:"d M Y H:i" }}</small>
+            </div>
+            <p>{{ reponse.contenu }}</p>
+          </div>
+          {% endfor %}
+        </div>
+        
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+ {% block js %}
+<script src="{% static 'js/forum_detail.js' %}"></script>
+{% endblock %}

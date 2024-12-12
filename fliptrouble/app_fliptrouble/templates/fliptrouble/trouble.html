@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Trouble | FlipTrouble
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3 text-white">
+    <h2 class="text-center">Trouble</h2>
+    <div id="message" class="text-center mt-3"></div>
+    <div class="text-center mt-3">
+        <button id="rollDiceBtn" class="btn btn-primary">Lancer le dé</button>
+        <p class="mt-2">Résultat du dé : <span id="diceResult">-</span></p>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-10 offset-1">
+            <!-- Plateau : on simplifie, par exemple 28 cases en ligne -->
+            <div id="board" class="d-flex flex-wrap justify-content-center">
+                <!-- Cases générées par JS -->
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <h3>Pions</h3>
+        <div id="pions" class="d-flex justify-content-around mt-3">
+            <div>
+                <h4>Bleu</h4>
+                <div id="blueHome" class="d-flex flex-wrap"></div>
+            </div>
+            <div>
+                <h4>Rouge</h4>
+                <div id="redHome" class="d-flex flex-wrap"></div>
+            </div>
+            <div>
+                <h4>Vert</h4>
+                <div id="greenHome" class="d-flex flex-wrap"></div>
+            </div>
+            <div>
+                <h4>Jaune</h4>
+                <div id="yellowHome" class="d-flex flex-wrap"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+<script src="{% static 'js/trouble.js' %}"></script>
+{% endblock %}

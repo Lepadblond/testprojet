@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Créer un compte | FlipTrouble
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h2 class="text-center">Créer un compte</h2>
+    <div class="container">
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="bg-brun card-header">
+                        <h3>S'inscrire</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="form-signup" method="post">
+                            {% csrf_token %}
+                            <div class="form-group mb-2">
+                                <label for="username">Nom d'utilisateur</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger">{{ form.username.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="row">
+                                <div class="form-group mb-2 col-6">
+                                    <label for="genre">Genre</label>
+                                    {{ form.sexe }}
+                                    {% if form.sexe.errors %}
+                                        <div class="text-danger">{{ form.sexe.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group mb-2 col-6">
+                                    <label for="date_naissance">Date de naissance</label>
+                                    {{ form.date_de_naissance }}
+                                    {% if form.date_of_birth.errors %}
+                                        <div class="text-danger">{{ form.date_of_birth.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="courriel">Courriel</label>
+                                {{ form.courriel }}
+                                {% if form.courriel.errors %}
+                                    <div class="text-danger">{{ form.courriel.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="password">Mot de passe</label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                    <div class="text-danger">{{ form.password1.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="confirm_mdp">Confirmer le mot de passe</label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                    <div class="text-danger">{{ form.password2.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="text-center">
+                                <button type="reset" class="bg-blanc btn btn-primary">Réinitialiser</button>
+                                <button type="submit" class="bg-brunpale btn btn-primary">S'inscrire</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <p class="text-center">
+                            Vous avez déjà un compte? <a href="{% url 'login' %}">cliquez ici!</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form-signup');
+        const inputs = form.querySelectorAll('input');
+
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                let errorDiv = input.parentElement.querySelector('.text-danger');
+                
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.classList.add('text-danger');
+                    input.parentElement.appendChild(errorDiv);
+                } else {
+                    errorDiv.innerHTML = '';
+                }
+
+                if (!input.checkValidity()) {
+                    errorDiv.innerHTML = input.validationMessage;
+                }
+
+                // Validation personnalisée pour le champ "username"
+                if (input.name === 'username' && input.value.length < 3) {
+                    errorDiv.innerHTML = "Le nom d'utilisateur doit contenir au moins 3 caractères.";
+                }
+
+                // Validation personnalisée pour le mot de passe
+                if (input.name === 'password1') {
+                    const hasUppercase = /[A-Z]/.test(input.value);
+                    const hasSymbol = /[^a-zA-Z0-9]/.test(input.value);
+                    if (!hasUppercase || !hasSymbol || input.value.length < 8) {
+                        errorDiv.innerHTML = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, et un symbole.";
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}

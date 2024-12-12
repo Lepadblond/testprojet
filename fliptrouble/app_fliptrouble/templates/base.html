@@ -1,0 +1,285 @@
+{% load static %}
+{% csrf_token %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}FlipTrouble{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="icon" type="image/png" href="{% static 'img/fliptrouble.png' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-noir d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-dark px-3" style="padding-right: 2rem">
+      <a class="navbar-brand" href="{% url 'index' %}">
+        <img
+          src="{% static 'img/fliptrouble.png' %}"
+          alt="O"
+          style="width: 2em; height: auto; vertical-align: middle"
+        />
+        FlipTrouble
+      </a>
+      <ul class="navbar-nav d-flex flex-row ml-auto">
+        {% if user.is_authenticated %}
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="{% url 'index' %}">Jeux</a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="{% url 'recherche' %}">Rechercher</a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="{% url 'forum_home' %}">Forum</a>
+        </li>
+        {% if user.is_superuser %}
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="{% url 'control_panel' %}">Panneau de contrôle</a>
+        </li>
+        {% endif %}
+        <li class="nav-item mx-2 position-relative">
+          <a class="nav-link" href="javascript:void(0);" id="notification-icon">
+            <i class="fas fa-bell"></i>
+            <span
+              class="badge bg-danger"
+              id="notification-count"
+              style="display: none"
+              >0</span
+            >
+          </a>
+          <div
+            id="notification-list"
+            class="dropdown-menu dropdown-menu-end"
+            style="
+              display: none;
+              position: absolute;
+              top: 40px;
+              right: 0;
+              z-index: 1000;
+            "
+          >
+            <h6 class="dropdown-header">Notifications</h6>
+            <div id="notifications-container">
+              <p class="dropdown-item text-muted">Aucune notification</p>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item dropdown mx-2">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style="padding-right: 0"
+          >
+            <img
+              src="{% static 'img/compte.png' %}"
+              alt="Mon compte"
+              style="width: 24px; height: 24px; vertical-align: middle"
+            />
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            style="left: auto; right: 0"
+          >
+            <li>
+              <a class="dropdown-item" href="{% url 'profil' user.id %}">
+                <img
+                  src="{% static 'img/profil.png' %}"
+                  alt="Profil"
+                  style="width: 16px; height: 16px; margin-right: 5px"
+                />
+                Profil
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'messagerie' %}">
+                <img
+                  src="{% static 'img/messagerie.png' %}"
+                  alt="Messagerie"
+                  style="width: 16px; height: 16px; margin-right: 5px"
+                />
+                Messagerie
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item" href="{% url 'logout' %}">
+                <img
+                  src="{% static 'img/deconnexion.png' %}"
+                  alt="Déconnexion"
+                  style="width: 16px; height: 16px; margin-right: 5px"
+                />
+                Déconnexion
+              </a>
+            </li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="{% url 'login' %}">Connexion</a>
+        </li>
+        <li class="nav-item mx-2">
+          <a class="nav-link" href="{% url 'inscription' %}">Inscription</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    <main class="flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="mt-auto">
+        <div class="container-fluid py-3 bg-noir">
+            <div class="text-center row">
+                <div class="col-6">
+                    <p>Réalisé par Équipe 5</p>
+                </div>
+                <div class="col-md-6">
+                    <p>420-08E-FX Projet Intégrateur | Présenté à José Consola</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <form style="display:none;">
+        {% csrf_token %}
+    </form>
+    {% block js %}
+<<<<<<< HEAD
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+=======
+    <script src="{% static 'js/utils-ajax.js' %}"></script>
+
+  
+>>>>>>> d77237c8cc66b5be033b980dd314a4d290c4ea28
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const notificationIcon = document.getElementById("notification-icon");
+            const notificationList = document.getElementById("notification-list");
+            const notificationContainer = document.getElementById("notifications-container");
+            const notificationCount = document.getElementById("notification-count");
+            let isMenuOpen = false;
+            let timeoutId;
+    
+            // Hover logic for notifications dropdown
+            if (notificationIcon) {
+                notificationIcon.addEventListener("mouseover", function (event) {
+                    event.preventDefault();
+                    clearTimeout(timeoutId);
+                    notificationList.style.display = "block";
+                    isMenuOpen = true;
+                });
+    
+                notificationIcon.addEventListener("mouseout", function (event) {
+                    event.preventDefault();
+                    timeoutId = setTimeout(function () {
+                        if (!notificationList.matches(':hover')) {
+                            notificationList.style.display = "none";
+                            isMenuOpen = false;
+                        }
+                    }, 200);
+                });
+    
+                notificationList.addEventListener("mouseover", function (event) {
+                    clearTimeout(timeoutId);
+                    isMenuOpen = true;
+                });
+    
+                notificationList.addEventListener("mouseout", function (event) {
+                    timeoutId = setTimeout(function () {
+                        if (!notificationIcon.matches(':hover')) {
+                            notificationList.style.display = "none";
+                            isMenuOpen = false;
+                        }
+                    }, 200);
+                });
+            }
+    
+            const username = "{{ user.username|escapejs }}";
+            if (username) {
+                // Initialize Pusher
+                // Replace 'YOUR_PUSHER_KEY' and 'YOUR_CLUSTER' with your actual credentials
+                Pusher.logToConsole = true; // For debugging, remove in production
+                var pusher = new Pusher('824c15b8135b2d582ea3', {
+                    cluster: 'us2',
+                    forceTLS: true
+                });
+    
+                // Subscribe to the user's notification channel
+                const channel = pusher.subscribe('notifications_' + username);
+    
+                // Bind to new-notification events
+                channel.bind('new-notification', function (data) {
+                    console.log("Received notification from Pusher:", data);
+    
+                    // Create a new notification element
+                    const notificationItem = document.createElement("div");
+                    notificationItem.classList.add("dropdown-item", "notif-item");
+    
+                    let innerHTML = `<span>${data.notification}</span>`;
+                    if (data.request_id) {
+                        innerHTML += `
+                            <button class="accept-request" data-request-id="${data.request_id}">Accepter</button>
+                            <button class="reject-request" data-request-id="${data.request_id}">Refuser</button>
+                        `;
+                    }
+    
+                    notificationItem.innerHTML = innerHTML;
+                    notificationContainer.appendChild(notificationItem);
+    
+                    let count = parseInt(notificationCount.textContent) || 0;
+                    count++;
+                    notificationCount.textContent = count;
+                    notificationCount.style.display = "block";
+                });
+            } else {
+                console.error("Username not found or user not authenticated");
+            }
+    
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('accept-request') || event.target.classList.contains('reject-request')) {
+                    const requestId = event.target.dataset.requestId;
+                    const isAccept = event.target.classList.contains('accept-request');
+                    const url = isAccept ? `/app_fliptrouble/accept_friend_request/${requestId}/` : `/app_fliptrouble/decline_friend_request/${requestId}/`;
+    
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message);
+                        // Remove the notification from DOM
+                        const btn = event.target;
+                        const notifItem = btn.closest('.notif-item');
+                        if (notifItem) {
+                            notifItem.remove();
+                        }
+    
+                        // Update the count
+                        let count = parseInt(notificationCount.textContent) || 0;
+                        if (count > 0) {
+                            count--;
+                            notificationCount.textContent = count;
+                            if (count === 0) {
+                                notificationCount.style.display = "none";
+                                if (notificationContainer.children.length === 0) {
+                                    notificationContainer.innerHTML = '<p class="dropdown-item text-muted">Aucune notification</p>';
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                }
+            });
+        });
+    </script>
+    {% endblock %}
+    </body>
+</html>
+

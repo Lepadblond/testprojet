@@ -1,0 +1,168 @@
+{% extends 'base.html' %} {% block title %}Recherche | FlipTrouble{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center">Recherche de Profils</h2>
+  <div class="row mt-4">
+    <!-- Barre latérale pour les filtres -->
+    <div class="col-md-4">
+      <div class="card p-3 bg-dark text-white">
+        <h4>Filtres</h4>
+
+        <!-- Filtre par nom d'utilisateur -->
+        <div class="mb-3">
+          <label for="query">Nom d'utilisateur:</label>
+          <input
+            type="text"
+            id="query"
+            name="query"
+            class="form-control"
+            placeholder="Nom d'utilisateur"
+          />
+        </div>
+
+        <!-- Filtre par sexe (Checkbox + Select) -->
+        <div class="mb-3">
+          <input
+            type="checkbox"
+            id="sexeCheck"
+            onclick="toggleSelect('sexeSelect', 'sexeCheck')"
+          />
+          <label for="sexeCheck">Filtrer par sexe</label>
+          <select
+            id="sexeSelect"
+            name="sexe"
+            class="form-control mt-1"
+            style="display: none"
+          >
+            <option value="">Tous</option>
+            <option value="homme">Homme</option>
+            <option value="femme">Femme</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <!-- Filtre par jeu préféré (Checkbox + Select) -->
+        <div class="mb-3">
+          <input
+            type="checkbox"
+            id="gameCheck"
+            onclick="toggleSelect('gameSelect', 'gameCheck')"
+          />
+          <label for="gameCheck">Filtrer par jeu préféré</label>
+          <select
+            id="gameSelect"
+            name="jeux_prefere"
+            class="form-control mt-1"
+            style="display: none"
+          >
+            <option value="">Tous</option>
+            <option value="Othello">Othello</option>
+            <option value="Trouble">Trouble</option>
+          </select>
+        </div>
+
+        <!-- Bouton de recherche (optionnel si vous voulez une recherche manuelle) -->
+        <!--
+        <button type="button" class="btn btn-primary mt-2" onclick="performSearch()">
+          Rechercher
+        </button>
+        -->
+      </div>
+    </div>
+
+    <!-- Section des résultats -->
+    <div class="col-md-8">
+      <h3>Résultats de la recherche:</h3>
+      <div id="results" class="row mt-3">
+        <!-- Les résultats de recherche vont être chargés ici par AJAX -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block js %}
+<script>
+  function toggleSelect(selectId, checkBoxId) {
+    const selectElement = document.getElementById(selectId);
+    const checkBox = document.getElementById(checkBoxId);
+
+    selectElement.style.display =
+      selectElement.style.display === "none" ? "block" : "none";
+
+    if (!checkBox.checked) {
+      selectElement.value = "";
+    }
+
+    performSearch();
+  }
+
+  document.getElementById("query").addEventListener("input", performSearch);
+  document
+    .getElementById("sexeSelect")
+    .addEventListener("change", performSearch);
+  document
+    .getElementById("gameSelect")
+    .addEventListener("change", performSearch);
+
+  function performSearch() {
+    const query = document.getElementById("query").value;
+    const sexe = document.getElementById("sexeSelect").value;
+    const jeux_prefere = document.getElementById("gameSelect").value;
+
+    // Build the query string for the URL
+    const params = new URLSearchParams({
+      query: query,
+      sexe: sexe,
+      jeux_prefere: jeux_prefere,
+    });
+
+    fetch("{% url 'recherche' %}?" + params.toString(), {
+      method: "GET",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const resultsContainer = document.getElementById("results");
+        resultsContainer.innerHTML = "";
+
+        if (data.profiles && data.profiles.length > 0) {
+          data.profiles.forEach((profile) => {
+            const cardCol = document.createElement("div");
+            cardCol.classList.add("col-md-6", "mb-4");
+
+            const card = document.createElement("div");
+            card.classList.add("card", "bg-dark", "text-white");
+
+            const cardBody = document.createElement("div");
+            cardBody.classList.add("card-body");
+
+            cardBody.innerHTML = `
+              <h5 class="card-title"><a href="/app_fliptrouble/profil/${
+                profile.id
+              }" class="text-white">${profile.username}</a></h5>
+              <p class="card-text">
+                <strong>Sexe :</strong> ${profile.sexe || "Non spécifié"}<br>
+                <strong>Âge :</strong> ${profile.age || "Non spécifié"}<br>
+                <strong>Jeu préféré :</strong> ${
+                  profile.jeux_prefere || "Non spécifié"
+                }
+              </p>
+            `;
+
+            card.appendChild(cardBody);
+            cardCol.appendChild(card);
+            resultsContainer.appendChild(cardCol);
+          });
+        } else {
+          resultsContainer.innerHTML =
+            "<p>Aucun profil correspondant à vos critères de recherche.</p>";
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+
+  // Exécutez la recherche initiale pour afficher tous les profils au chargement de la page
+  document.addEventListener("DOMContentLoaded", performSearch);
+</script>
+{% endblock %}

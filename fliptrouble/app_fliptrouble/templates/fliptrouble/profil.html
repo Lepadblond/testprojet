@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Profil | FlipTrouble
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-8 col-md-10">
+      <form method="post" action="{% url 'modifier_profil' user_courant.id %}" id="profilForm">
+        {% csrf_token %}
+        <div class="card bg-brunpale shadow-lg border-primary">
+          <div class="row no-gutters">
+            <!-- Photo de Profil -->
+            <div class="col-md-4 text-center p-4">
+              <img
+                src="https://robohash.org/{{ user_courant.id }}"
+                alt="Image de Profil"
+                class="img-fluid rounded-circle mb-3"
+                style="width: 150px; height: 150px;"
+              />
+              {% if user.is_authenticated and user.id == user_courant.id %}
+                <button type="button" onclick="enableEdit(event)" class="btn btn-primary btn-sm mb-2">Modifier le profil</button>
+                <button type="submit" id="saveButton" class="btn btn-success btn-sm d-none mr-2">Enregistrer</button>
+                <button type="button" id="cancelButton" onclick="cancelEdit()" class="btn btn-secondary btn-sm d-none">Annuler</button>
+              {% else %}
+                {% if is_friend %}
+                  <span class="badge badge-success">Déjà amis</span>
+                  <a href="{% url 'remove_friend' user_courant.id %}" class="btn btn-danger btn-sm ml-2">Supprimer l'ami</a>
+                {% elif is_request_sent %}
+                  <span class="badge badge-warning">Demande envoyée</span>
+                  <a href="{% url 'cancel_friend_request' user_courant.id %}" class="btn btn-secondary btn-sm ml-2">Annuler la demande</a>
+                {% elif is_request_received %}
+                  <span class="badge badge-info">Demande reçue</span>
+                  <a href="{% url 'accept_friend_request' friend_request.id %}" class="btn btn-success btn-sm ml-2">Accepter</a>
+                  <a href="{% url 'decline_friend_request' friend_request.id %}" class="btn btn-danger btn-sm ml-2">Refuser</a>
+                {% else %}
+                  <a href="{% url 'send_friend_request' user_courant.id %}" class="btn btn-success btn-sm">Ajouter comme ami</a>
+                {% endif %}
+              {% endif %}
+            </div>
+            <!-- Informations Utilisateur -->
+            <div class="col-md-8">
+              <div class="card-body">
+                <h3 class="card-title">{{ user_courant.username }}</h3>
+                <p class="card-text"><strong>Courriel :</strong> {{ user_courant.courriel }}
+                  {% if user.is_authenticated and user.id == user_courant.id %}
+                    <a href="{% url 'email_change_request' %}" class="btn btn-link btn-sm">Changer mon adresse e-mail</a>
+                  {% endif %}
+                </p>
+                <p class="card-text"><strong>Âge :</strong> {{ age }} ans</p>
+                <p class="card-text"><strong>Genre :</strong> 
+                  <span id="sexeDisplay">{{ user_courant.sexe|default:"Non spécifié" }}</span>
+                  <select id="sexeInput" name="sexe" class="form-control d-none">
+                    <option value="homme" {% if user_courant.sexe == "homme" %}selected{% endif %}>Homme</option>
+                    <option value="femme" {% if user_courant.sexe == "femme" %}selected{% endif %}>Femme</option>
+                    <option value="autre" {% if user_courant.sexe == "autre" %}selected{% endif %}>Autre</option>
+                  </select>
+                </p>
+                <p class="card-text"><strong>Jeu favori :</strong> 
+                  <span id="jeuxPrefereDisplay">{{ user_courant.jeux_prefere|default:"Aucun" }}</span>
+                  <select id="jeuxPrefereInput" name="jeux_prefere" class="form-control d-none">
+                    <option value="Othello" {% if user_courant.jeux_prefere == "Othello" %}selected{% endif %}>Othello</option>
+                    <option value="Trouble" {% if user_courant.jeux_prefere == "Trouble" %}selected{% endif %}>Trouble</option>
+                  </select>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Section Liste d'Amis (seulement pour le profil personnel) -->
+        {% if friends %}
+        <div class="card bg-brunpale shadow-lg border-primary mt-4">
+          <div class="card-body">
+            <h4 class="card-title">Ma Liste d'Amis</h4>
+            <ul class="list-group list-group-flush">
+              {% for friend in friends %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <a href="{% url 'profil' friend.id %}">{{ friend.username }}</a>
+                  <a href="{% url 'remove_friend' friend.id %}" class="btn btn-danger btn-sm">Retirer</a>
+                </li>
+              {% empty %}
+                <li class="list-group-item">Vous n'avez aucun ami pour le moment.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endblock %}
+
+    {% block js %}
+    {{ block.super }}
+    <script src="{% static 'js/afficherStatistique.js' %}"></script>
+    
+    <script>
+      function enableEdit(event) {
+        // Masquer les affichages et afficher les champs d'édition
+        document.getElementById('sexeDisplay').classList.add('d-none');
+        document.getElementById('sexeInput').classList.remove('d-none');
+    
+        document.getElementById('jeuxPrefereDisplay').classList.add('d-none');
+        document.getElementById('jeuxPrefereInput').classList.remove('d-none');
+    
+        // Afficher les boutons "Enregistrer" et "Annuler"
+        document.getElementById('saveButton').classList.remove('d-none');
+        document.getElementById('cancelButton').classList.remove('d-none');
+    
+        // Désactiver le bouton "Modifier le profil"
+        event.currentTarget.classList.add('d-none');
+      }
+    
+      function cancelEdit() {
+        // Réinitialiser les champs d'édition
+        document.getElementById('sexeDisplay').classList.remove('d-none');
+        document.getElementById('sexeInput').classList.add('d-none');
+    
+        document.getElementById('jeuxPrefereDisplay').classList.remove('d-none');
+        document.getElementById('jeuxPrefereInput').classList.add('d-none');
+    
+        // Masquer les boutons "Enregistrer" et "Annuler"
+        document.getElementById('saveButton').classList.add('d-none');
+        document.getElementById('cancelButton').classList.add('d-none');
+    
+        // Réafficher le bouton "Modifier le profil"
+        document.querySelector('button[onclick^="enableEdit"]').classList.remove('d-none');
+      }
+    </script>
+  {% endblock %}
+    

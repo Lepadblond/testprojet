@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Ajouter un post</h2>
+    <div class="d-flex mb-5">
+      <a href="/app_fliptrouble/forum" class="bg-bleu btn btn-primary" style="width: 300px;">Retour</a>
+  </div>    
+    {% if user.is_authenticated %}
+    <form class="mt-4" action="" method="post" novalidate>
+        {% csrf_token %}
+        
+        <div class="row mb-3">
+            <label for="titre" class="col-md-2 col-form-label">Titre</label>
+            <div class="col-md-4">
+                {{ form.titre }}  
+            </div>
+            
+            <label for="category" class="col-md-2 col-form-label">Catégorie</label>
+            <div class="col-md-4">
+                {{ form.category }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <label for="body" class="col-md-2 col-form-label">Contenu</label>
+            <div class="col-md-10">
+                {{ form.body }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-10 offset-md-2 text-center">
+                <button type="reset" class="btn btn-secondary" style="width: 200px;">Réinitialiser</button>
+                <button type="submit" class="btn btn-primary me-2" style="width: 200px;">Soumettre</button>
+            </div>
+        </div>
+    </form>
+    {% else %}
+    <p>Vous devez être connecté pour ajouter un post.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block js %}
+    <!-- Mettre votre JS ici au besoin -->
+{% endblock %}

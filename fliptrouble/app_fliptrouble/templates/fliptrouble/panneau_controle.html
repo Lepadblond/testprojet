@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Panneau de contrôle</h1>
+    <ul class="nav nav-tabs" id="controlPanelTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.tab == 'users' or not request.GET.tab %}active{% endif %}" 
+               id="users-tab" 
+               href="?tab=users" 
+               role="tab" 
+               aria-controls="users" 
+               aria-selected="{% if request.GET.tab == 'users' or not request.GET.tab %}true{% else %}false{% endif %}">
+                Utilisateurs
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.tab == 'reports' %}active{% endif %}" 
+               id="reports-tab" 
+               href="?tab=reports" 
+               role="tab" 
+               aria-controls="reports" 
+               aria-selected="{% if request.GET.tab == 'reports' %}true{% else %}false{% endif %}">
+                Contenus signalés
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4" id="controlPanelTabsContent">
+        <!-- Gestion des utilisateurs -->
+        <div class="tab-pane fade {% if request.GET.tab == 'users' or not request.GET.tab %}show active{% endif %}" 
+             id="users" 
+             role="tabpanel" 
+             aria-labelledby="users-tab">
+            <h3>Gestion des utilisateurs</h3>
+            <!-- Formulaire de recherche -->
+            <form method="get" action="{% url 'control_panel' %}" class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" name="name" id="search-name" class="form-control" placeholder="Nom d'utilisateur" value="{{ request.GET.name }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="status" id="search-status" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="actif" {% if request.GET.status == "actif" %}selected{% endif %}>Actif</option>
+                        <option value="suspendu" {% if request.GET.status == "suspendu" %}selected{% endif %}>Suspendu</option>
+                        <option value="banni" {% if request.GET.status == "banni" %}selected{% endif %}>Banni</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="role" id="search-role" class="form-select">
+                        <option value="">Tous les rôles</option>
+                        <option value="administrateur" {% if request.GET.role == "administrateur" %}selected{% endif %}>Administrateur</option>
+                        <option value="moderateur" {% if request.GET.role == "moderateur" %}selected{% endif %}>Modérateur</option>
+                        <option value="utilisateur" {% if request.GET.role == "utilisateur" %}selected{% endif %}>Utilisateur</option>
+                    </select>
+                </div>
+                <div class="col-md-12 text-end mt-3">
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                </div>
+            </form>
+
+            <!-- Table des utilisateurs -->
+            <table class="table table-striped table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nom d'utilisateur</th>
+                        <th>Courriel</th>
+                        <th>Rôle</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.courriel }}</td>
+                        <td>
+                            {% if user.is_superuser %} Administrateur
+                            {% elif user.est_moderateur %} Modérateur
+                            {% else %} Utilisateur
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.est_bannie %} Banni
+                            {% elif user.est_suspendu %} Suspendu jusqu'à {{ user.suspendu_jusqua|date:"d/m/Y H:i" }}
+                            {% else %} Actif
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not user.is_superuser %}
+                            <form method="post" action="{% url 'user_action' user.id %}?{{ request.GET.urlencode }}" class="d-inline">
+                                {% csrf_token %}
+                                {% if not user.est_bannie %}
+                                <button name="action" value="ban" class="btn btn-danger btn-sm">Bannir</button>
+                                {% else %}
+                                <button name="action" value="unban" class="btn btn-success btn-sm">Dé-bannir</button>
+                                {% endif %}
+                                {% if not user.est_moderateur %}
+                                <button name="action" value="promote" class="btn btn-primary btn-sm">Promouvoir</button>
+                                {% else %}
+                                <button name="action" value="demote" class="btn btn-warning btn-sm">Rétrograder</button>
+                                {% endif %}
+                                {% if user.est_suspendu %}
+                                <button name="action" value="unsuspend" class="btn btn-info btn-sm">Désuspendre</button>
+                                {% else %}
+                                <button name="action" value="suspend" class="btn btn-secondary btn-sm">Suspendre</button>
+                                {% endif %}
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Gestion des contenus signalés -->
+        <div class="tab-pane fade {% if request.GET.tab == 'reports' %}show active{% endif %}" 
+             id="reports" 
+             role="tabpanel" 
+             aria-labelledby="reports-tab">
+            <h3>Contenus signalés</h3>
+            <div class="accordion" id="reportsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="publications-heading">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#publications-collapse" aria-expanded="true" aria-controls="publications-collapse">
+                            Publications signalées
+                        </button>
+                    </h2>
+                    <div id="publications-collapse" class="accordion-collapse collapse show" aria-labelledby="publications-heading" data-bs-parent="#reportsAccordion">
+                        <div class="accordion-body">
+                            {% if reported_publications %}
+                            <ul class="list-group">
+                                {% for publication in reported_publications %}
+                                <li class="list-group-item">
+                                    <strong>{{ publication.titre }}</strong> par {{ publication.id_utilisateur.username }}
+                                    <form method="post" action="{% url 'content_action' 'publication' publication.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button name="action" value="delete" class="btn btn-danger btn-sm">Supprimer</button>
+                                        <button name="action" value="ban" class="btn btn-warning btn-sm">Bannir l'auteur</button>
+                                    </form>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p>Aucune publication signalée.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commentaires signalés -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="comments-heading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#comments-collapse" aria-expanded="false" aria-controls="comments-collapse">
+                            Commentaires signalés
+                        </button>
+                    </h2>
+                    <div id="comments-collapse" class="accordion-collapse collapse" aria-labelledby="comments-heading" data-bs-parent="#reportsAccordion">
+                        <div class="accordion-body">
+                            {% if reported_comments %}
+                            <ul class="list-group">
+                                {% for comment in reported_comments %}
+                                <li class="list-group-item">
+                                    {{ comment.contenu }} par {{ comment.id_utilisateur.username }}
+                                    <form method="post" action="{% url 'content_action' 'comment' comment.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button name="action" value="delete" class="btn btn-danger btn-sm">Supprimer</button>
+                                        <button name="action" value="ban" class="btn btn-warning btn-sm">Bannir l'auteur</button>
+                                    </form>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p>Aucun commentaire signalé.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages signalés -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="messages-heading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#messages-collapse" aria-expanded="false" aria-controls="messages-collapse">
+                            Messages signalés
+                        </button>
+                    </h2>
+                    <div id="messages-collapse" class="accordion-collapse collapse" aria-labelledby="messages-heading" data-bs-parent="#reportsAccordion">
+                        <div class="accordion-body">
+                            {% if reported_messages %}
+                            <ul class="list-group">
+                                {% for message in reported_messages %}
+                                <li class="list-group-item">
+                                    {{ message.objet }} par {{ message.id_utilisateur.username }}
+                                    <form method="post" action="{% url 'content_action' 'message' message.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button name="action" value="delete" class="btn btn-danger btn-sm">Supprimer</button>
+                                        <button name="action" value="ban" class="btn btn-warning btn-sm">Bannir l'auteur</button>
+                                    </form>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p>Aucun message signalé.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

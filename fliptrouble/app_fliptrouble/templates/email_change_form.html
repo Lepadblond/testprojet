@@ -1,0 +1,14 @@
+<!-- email_change_form.html -->
+
+{% extends 'base.html' %} {% load static %} {% block title %} Changer votre
+adresse e-mail | FlipTrouble {% endblock %} {% block content %}
+<div class="container mt-5">
+  <h2>Changer votre adresse e-mail</h2>
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">
+      Envoyer la demande de changement
+    </button>
+  </form>
+</div>
+{% endblock %}

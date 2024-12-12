@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %} Se connecter | FlipTrouble {%endblock %}
+{% block content %}
+<div class="container mt-3">
+  <h2 class="text-center">Veuillez vous connecter</h2>
+  <div class="container">
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="bg-brun card-header">
+            <h3>S'identifier</h3>
+          </div>
+          <div class="card-body">
+            <form method="post" action="{% url 'login' %}">
+              {% csrf_token %} {{ form.as_p }}
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary">
+                  Se connecter
+                </button>
+              </div>
+            </form>
+            <div class="text-center mt-3">
+              <a href="{% url 'password_reset' %}">Mot de passe oublié ?</a>
+            </div>
+          </div>
+          <div class="card-footer">
+            <p class="text-center">
+              Vous n'avez pas de compte?
+              <a href="{% url 'inscription' %}">cliquez ici!</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock %}

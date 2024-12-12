@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  <script>
+    Pusher.logToConsole = true;
+
+    // Remplacez par vos vraies infos Pusher
+    var pusher = new Pusher('824c15b8135b2d582ea3', {
+      cluster: 'us2' // pas 'votre_cluster'
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      alert(JSON.stringify(data));
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>Essayez d'envoyer un évènement sur le canal <code>my-channel</code> avec l'événement <code>my-event</code>.</p>
+</body>
+</html>

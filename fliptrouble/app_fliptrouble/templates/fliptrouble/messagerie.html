@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Messagerie | FlipTrouble
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3 class="text-center">Messagerie</h3>
+    <div class="text-center mt-3">
+        <a href="{% url 'messagerie_ajouter' %}" class="btn btn-primary">Envoyez un nouveau message</a>
+    </div>
+
+    <ul class="nav nav-tabs mt-5" id="messageTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.tab == 'recus' or not request.GET.tab %}active{% endif %}" 
+               id="recus-tab" 
+               href="?tab=recus" 
+               role="tab" 
+               aria-controls="recus" 
+               aria-selected="{% if request.GET.tab == 'recus' or not request.GET.tab %}true{% else %}false{% endif %}">
+                Messages reçus
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.tab == 'envoyes' %}active{% endif %}" 
+               id="envoyes-tab" 
+               href="?tab=envoyes" 
+               role="tab" 
+               aria-controls="envoyes" 
+               aria-selected="{% if request.GET.tab == 'envoyes' %}true{% else %}false{% endif %}">
+                Messages envoyés
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.tab == 'corbeille' %}active{% endif %}" 
+               id="corbeille-tab" 
+               href="?tab=corbeille" 
+               role="tab" 
+               aria-controls="corbeille" 
+               aria-selected="{% if request.GET.tab == 'corbeille' %}true{% else %}false{% endif %}">
+                Corbeille
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4">
+        <!-- Messages reçus -->
+        <div class="tab-pane fade {% if request.GET.tab == 'recus' or not request.GET.tab %}show active{% endif %}" 
+             id="recus" 
+             role="tabpanel" 
+             aria-labelledby="recus-tab">
+            <h4>Messages reçus</h4>
+            {% if messages %}
+                <ul class="list-group">
+                    {% for message in messages %}
+                        {% if not message.est_supprime_par_destinataire %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>De:</strong> {{ message.id_utilisateur.username }}<br>
+                                    <strong>Sujet:</strong> {{ message.objet }}
+                                    <span class="badge {% if message.est_lu %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if message.est_lu %}Lu{% else %}Non Lu{% endif %}
+                                    </span><br>
+                                    <strong>Message:</strong> {{ message.contenu }}<br>
+                                    <small><strong>Reçu le:</strong> {{ message.date_envoye|date:"d M Y H:i" }}</small>
+                                </div>
+                                <div>
+                                    <a href="{% url 'archiver_message' message.id %}" class="btn btn-link">Archiver</a>
+                                    <a href="{% url 'supprimer_message' message.id %}?role=destinataire" class="btn btn-danger">Supprimer</a>
+                                    <a href="{% url 'signaler_message' message.id %}" class="btn btn-warning">Signaler</a>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Vous n'avez pas de messages reçus pour le moment.</p>
+            {% endif %}
+        </div>
+
+        <!-- Messages envoyés -->
+        <div class="tab-pane fade {% if request.GET.tab == 'envoyes' %}show active{% endif %}" 
+             id="envoyes" 
+             role="tabpanel" 
+             aria-labelledby="envoyes-tab">
+            <h4>Messages envoyés</h4>
+            {% if messages %}
+                <ul class="list-group">
+                    {% for message in messages %}
+                        {% if not message.est_supprime_par_envoyeur %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>À:</strong> {{ message.destinataire.username }}<br>
+                                    <strong>Sujet:</strong> {{ message.objet }}<br>
+                                    <strong>Message:</strong> {{ message.contenu }}<br>
+                                    <small><strong>Envoyé le:</strong> {{ message.date_envoye|date:"d M Y H:i" }}</small>
+                                </div>
+                                <div>
+                                    <a href="{% url 'archiver_message' message.id %}" class="btn btn-link">Archiver</a>
+                                    <a href="{% url 'supprimer_message' message.id %}?role=envoyeur" class="btn btn-danger">Supprimer</a>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Vous n'avez pas de messages envoyés pour le moment.</p>
+            {% endif %}
+        </div>
+
+        <!-- Corbeille -->
+        <div class="tab-pane fade {% if request.GET.tab == 'corbeille' %}show active{% endif %}" 
+             id="corbeille" 
+             role="tabpanel" 
+             aria-labelledby="corbeille-tab">
+            <h3>Corbeille</h3>
+            {% if messages %}
+                <ul class="list-group">
+                    {% for message in messages %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>De:</strong> {{ message.id_utilisateur.username }}<br>
+                                <strong>Sujet:</strong> {{ message.objet }}<br>
+                                <strong>Message:</strong> {{ message.contenu }}<br>
+                                <small><strong>Reçu le:</strong> {{ message.date_envoye|date:"d M Y H:i" }}</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'restaurer_message' message.id %}" class="btn btn-link">Restaurer</a>
+                                <a href="{% url 'supprimer_definitivement_message' message.id %}" class="btn btn-danger">Supprimer Définitivement</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Votre corbeille est vide.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

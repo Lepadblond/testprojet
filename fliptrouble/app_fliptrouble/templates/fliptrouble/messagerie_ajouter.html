@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Envoyer un message | FlipTrouble
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center align-items-center">
+    <div class="card shadow p-4 w-100" style="max-width: 600px;">
+        <h3 class="text-center mb-4">Envoyer un nouveau message</h3>
+        <form method="post" action="{% url 'envoyer_message' %}">
+            {% csrf_token %}
+
+            <div class="form-group mt-3">
+                <label for="destinataire">Destinataire:</label>
+                <select id="destinataire" name="receiver" class="form-control" required>
+                    <option value="" disabled selected>Choisir un ami...</option>
+                    {% for friend in friends %}
+                        <option value="{{ friend.id }}">{{ friend.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+
+            <div class="form-group mt-3">
+                <label for="subject">Objet:</label>
+                <input type="text" id="subject" name="subject" class="form-control" required>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="body">Message:</label>
+                <textarea id="body" name="body" class="form-control" rows="5" required></textarea>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
