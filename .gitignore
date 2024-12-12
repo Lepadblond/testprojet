@@ -1,0 +1,15 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+.venv
+khuarddub$data
+settings.py
+__init__.py
+*.sqlite3
+*.db
+*migration*
+*.py
+
+node_modules
